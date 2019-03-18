@@ -79,7 +79,7 @@ public protocol TrimmerViewDelegate: class {
     }
 
     /// The minimum duration allowed for the trimming. The handles won't pan further if the minimum duration is attained.
-    public var minDuration: Double = 3
+    public var minDuration: Double = 1
 
     // MARK: - View & constraints configurations
 
@@ -305,6 +305,26 @@ public protocol TrimmerViewDelegate: class {
     public var endTime: CMTime? {
         let endPosition = rightHandleView.frame.origin.x + assetPreview.contentOffset.x - handleWidth
         return getTime(from: endPosition)
+    }
+    
+    /// Manual set the timerange for the start & end handles
+    public func setTimeRange(_ timeRange: CMTimeRange){
+        if let leftPosition = getPosition(from: timeRange.start){
+            let newStartOrigin = leftPosition - assetPreview.contentOffset.x
+            currentLeftConstraint = leftConstraint?.constant ?? 0
+            updateLeftConstraint(with: CGPoint(x: newStartOrigin-leftHandleView.frame.origin.x, y: 0))
+        }
+        if let rightPosition = getPosition(from: timeRange.end){
+            let newRightOrigin = rightPosition - assetPreview.contentOffset.x + handleWidth
+            currentRightConstraint = rightConstraint?.constant ?? 0
+            updateRightConstraint(with: CGPoint(x: newRightOrigin-rightHandleView.frame.origin.x, y: 0))
+        }
+        
+        layoutIfNeeded()
+        if let startTime = startTime{
+            seek(to: startTime)
+        }
+        updateSelectedTime(stoppedMoving: true)
     }
 
     private func updateSelectedTime(stoppedMoving: Bool) {
