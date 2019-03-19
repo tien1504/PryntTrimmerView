@@ -10,6 +10,7 @@ import AVFoundation
 import UIKit
 
 public protocol TrimmerViewDelegate: class {
+    func beganChangePositionBar()
     func didChangePositionBar(_ playerTime: CMTime)
     func positionBarStoppedMoving(_ playerTime: CMTime)
 }
@@ -233,7 +234,7 @@ public protocol TrimmerViewDelegate: class {
             } else {
                 currentRightConstraint = rightConstraint!.constant
             }
-            updateSelectedTime(stoppedMoving: false)
+            updateSelectedTime(state: .began)
         case .changed:
             let translation = gestureRecognizer.translation(in: superView)
             if isLeftGesture {
@@ -247,10 +248,10 @@ public protocol TrimmerViewDelegate: class {
             } else if let endTime = endTime {
                 seek(to: endTime)
             }
-            updateSelectedTime(stoppedMoving: false)
+            updateSelectedTime(state: .changed)
 
         case .cancelled, .ended, .failed:
-            updateSelectedTime(stoppedMoving: true)
+            updateSelectedTime(state: .ended)
         default: break
         }
     }
@@ -324,17 +325,21 @@ public protocol TrimmerViewDelegate: class {
         if let startTime = startTime{
             seek(to: startTime)
         }
-        updateSelectedTime(stoppedMoving: true)
+        updateSelectedTime(state: .ended)
     }
 
-    private func updateSelectedTime(stoppedMoving: Bool) {
+    private func updateSelectedTime(state: UIGestureRecognizer.State) {
         guard let playerTime = positionBarTime else {
             return
         }
-        if stoppedMoving {
-            delegate?.positionBarStoppedMoving(playerTime)
-        } else {
+        switch state{
+        case .began:
+            delegate?.beganChangePositionBar()
+        case .changed:
             delegate?.didChangePositionBar(playerTime)
+        case .ended, .failed:
+            delegate?.positionBarStoppedMoving(playerTime)
+        default: break
         }
     }
 
@@ -349,17 +354,20 @@ public protocol TrimmerViewDelegate: class {
     }
 
     // MARK: - Scroll View Delegate
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        updateSelectedTime(state: .began)
+    }
 
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        updateSelectedTime(stoppedMoving: true)
+        updateSelectedTime(state: .ended)
     }
 
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
-            updateSelectedTime(stoppedMoving: true)
+            updateSelectedTime(state: .ended)
         }
     }
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        updateSelectedTime(stoppedMoving: false)
+        updateSelectedTime(state: .changed)
     }
 }
