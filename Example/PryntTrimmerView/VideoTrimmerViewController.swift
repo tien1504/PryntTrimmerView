@@ -28,6 +28,7 @@ class VideoTrimmerViewController: AssetSelectionViewController {
         super.viewDidLoad()
         trimmerView.handleColor = UIColor.white
         trimmerView.mainColor = UIColor.darkGray
+        trimmerView.unselectedColor = UIColor.red
     }
 
     @IBAction func selectAsset(_ sender: Any) {
@@ -49,9 +50,18 @@ class VideoTrimmerViewController: AssetSelectionViewController {
 
     override func loadAsset(_ asset: AVAsset) {
 
-        trimmerView.asset = asset
-        trimmerView.delegate = self
-        addVideoPlayer(with: asset, playerView: playerView)
+        
+        asset.loadValuesAsynchronously(forKeys: ["duration"]) {
+            DispatchQueue.main.async {
+                self.trimmerView.maxDuration = asset.duration.seconds
+                self.trimmerView.asset = asset
+                self.trimmerView.delegate = self
+                self.addVideoPlayer(with: asset, playerView: self.playerView)
+                self.trimmerView.setTimeRange(CMTimeRangeMake(kCMTimeZero, asset.duration))
+            }
+            
+        }
+        
     }
 
     private func addVideoPlayer(with asset: AVAsset, playerView: UIView) {

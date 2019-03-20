@@ -46,6 +46,12 @@ public protocol TrimmerViewDelegate: class {
             positionBar.backgroundColor = positionBarColor
         }
     }
+    
+    @IBInspectable public var unselectedColor: UIColor = UIColor.white{
+        didSet{
+            [leftMaskView, rightMaskView].forEach{$0.backgroundColor = unselectedColor}
+        }
+    }
 
     // MARK: Interface
 
@@ -163,7 +169,7 @@ public protocol TrimmerViewDelegate: class {
     private func setupMaskView() {
 
         leftMaskView.isUserInteractionEnabled = false
-        leftMaskView.backgroundColor = .white
+        leftMaskView.backgroundColor = unselectedColor
         leftMaskView.alpha = 0.7
         leftMaskView.translatesAutoresizingMaskIntoConstraints = false
         insertSubview(leftMaskView, belowSubview: leftHandleView)
@@ -174,7 +180,7 @@ public protocol TrimmerViewDelegate: class {
         leftMaskView.rightAnchor.constraint(equalTo: leftHandleView.centerXAnchor).isActive = true
 
         rightMaskView.isUserInteractionEnabled = false
-        rightMaskView.backgroundColor = .white
+        rightMaskView.backgroundColor = unselectedColor
         rightMaskView.alpha = 0.7
         rightMaskView.translatesAutoresizingMaskIntoConstraints = false
         insertSubview(rightMaskView, belowSubview: rightHandleView)
