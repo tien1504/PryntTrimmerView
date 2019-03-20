@@ -116,16 +116,16 @@ class VideoTrimmerViewController: AssetSelectionViewController {
 }
 
 extension VideoTrimmerViewController: TrimmerViewDelegate {
-    func beganChangePositionBar(){
+    func beganChangePositionBar(fromHandler hander: Handler){
         print("BEGAN change position bar")
     }
-    func positionBarStoppedMoving(_ playerTime: CMTime) {
+    func positionBarStoppedMoving(_ playerTime: CMTime, fromHandler hander: Handler) {
         player?.seek(to: playerTime, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
         player?.play()
         startPlaybackTimeChecker()
     }
 
-    func didChangePositionBar(_ playerTime: CMTime) {
+    func didChangePositionBar(_ playerTime: CMTime, fromHandler hander: Handler) {
         stopPlaybackTimeChecker()
         player?.pause()
         player?.seek(to: playerTime, toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)

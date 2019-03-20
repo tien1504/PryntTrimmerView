@@ -9,10 +9,15 @@
 import AVFoundation
 import UIKit
 
+public enum Handler{
+    case left
+    case right
+}
+
 public protocol TrimmerViewDelegate: class {
-    func beganChangePositionBar()
-    func didChangePositionBar(_ playerTime: CMTime)
-    func positionBarStoppedMoving(_ playerTime: CMTime)
+    func beganChangePositionBar(fromHandler handler: Handler)
+    func didChangePositionBar(_ playerTime: CMTime, fromHandler handler: Handler)
+    func positionBarStoppedMoving(_ playerTime: CMTime, fromHandler handler: Handler)
 }
 
 /// A view to select a specific time range of a video. It consists of an asset preview with thumbnails inside a scroll view, two
@@ -232,6 +237,7 @@ public protocol TrimmerViewDelegate: class {
     @objc func handlePanGesture(_ gestureRecognizer: UIPanGestureRecognizer) {
         guard let view = gestureRecognizer.view, let superView = gestureRecognizer.view?.superview else { return }
         let isLeftGesture = view == leftHandleView
+        let handler: Handler = isLeftGesture ? .left : .right
         switch gestureRecognizer.state {
 
         case .began:
@@ -240,7 +246,7 @@ public protocol TrimmerViewDelegate: class {
             } else {
                 currentRightConstraint = rightConstraint!.constant
             }
-            updateSelectedTime(state: .began)
+            updateSelectedTime(state: .began, fromHandler: handler)
         case .changed:
             let translation = gestureRecognizer.translation(in: superView)
             if isLeftGesture {
@@ -254,10 +260,10 @@ public protocol TrimmerViewDelegate: class {
             } else if let endTime = endTime {
                 seek(to: endTime)
             }
-            updateSelectedTime(state: .changed)
+            updateSelectedTime(state: .changed, fromHandler: handler)
 
         case .cancelled, .ended, .failed:
-            updateSelectedTime(state: .ended)
+            updateSelectedTime(state: .ended, fromHandler: handler)
         default: break
         }
     }
@@ -334,17 +340,17 @@ public protocol TrimmerViewDelegate: class {
         updateSelectedTime(state: .ended)
     }
 
-    private func updateSelectedTime(state: UIGestureRecognizer.State) {
+    private func updateSelectedTime(state: UIGestureRecognizer.State, fromHandler handler: Handler = .left) {
         guard let playerTime = positionBarTime else {
             return
         }
         switch state{
         case .began:
-            delegate?.beganChangePositionBar()
+            delegate?.beganChangePositionBar(fromHandler: handler)
         case .changed:
-            delegate?.didChangePositionBar(playerTime)
+            delegate?.didChangePositionBar(playerTime, fromHandler: handler)
         case .ended, .failed:
-            delegate?.positionBarStoppedMoving(playerTime)
+            delegate?.positionBarStoppedMoving(playerTime, fromHandler: handler)
         default: break
         }
     }
