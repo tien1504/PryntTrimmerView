@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PryntTrimmerView'
-  s.version          = '3.0.0'
+  s.version          = '4.0.2'
   s.summary          = 'A set of tools written in swift to help you trim and crop a video.'
 
   s.description      = <<-DESC
@@ -22,7 +22,7 @@ Second tool is a crop view, to preview a video and select the part of the video 
   s.author           = { 'henryhuck@hotmail.fr' => 'henryhuck@hotmail.fr' }
   s.source           = { :git => 'https://github.com/tien1504/PryntTrimmerView.git', :tag => s.version.to_s }
   s.ios.deployment_target = '9.0'
-  s.source_files = 'PryntTrimmerView/Classes/**/*'
-  s.swift_version = '4.2'
+  s.source_files = 'Sources/PryntTrimmerView/**/*'
+  s.swift_version = '5.0'
   
 end

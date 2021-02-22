@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [4.0.2] 09-18-2020
+
+Add Xcode 12 and Swift 5.3 support
+
+## [4.0.1] 07-14-2020
+
+Add SPM support
+
+## [4.0.0]
+
+Add Swift 5 support
+
 ## [3.0.0]
 
 ### Added
@@ -69,7 +81,10 @@ Fix a crash when calculating the thumbnail preview if the frame has not been set
 ### Added
 - Add a first version of the trimmer view
 
-[Unreleased]: https://github.com/prynt/PryntTrimmerView/compare/3.0.0...master
+[Unreleased]: https://github.com/prynt/PryntTrimmerView/compare/4.0.2...master
+[4.0.2]: https://github.com/prynt/PryntTrimmerView/compare/4.0.1...4.0.2
+[4.0.1]: https://github.com/prynt/PryntTrimmerView/compare/4.0.0...4.0.1
+[4.0.0]: https://github.com/prynt/PryntTrimmerView/compare/3.0.0...4.0.0
 [3.0.0]: https://github.com/prynt/PryntTrimmerView/compare/2.0.1...3.0.0
 [2.0.1]: https://github.com/prynt/PryntTrimmerView/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/prynt/PryntTrimmerView/compare/1.0.1...2.0.0
